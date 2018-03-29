@@ -28,6 +28,9 @@ public class GameView extends SurfaceView implements Runnable {
 	public void start() {
 		// To overriding
 	}
+	public boolean isSuspended() {
+		return suspended;
+	}
 	public void suspend() {
 		suspended = true;
 	}
@@ -45,8 +48,8 @@ public class GameView extends SurfaceView implements Runnable {
 	
 	@Override
 	public void run() {
-		while (true && !suspended) {
-			draw();
+		while (true) {
+			if (!suspended) draw();
 			
 			try {
 				Thread.sleep(17);
@@ -69,12 +72,10 @@ public class GameView extends SurfaceView implements Runnable {
 	private void draw() {
 		if (isFirst) {
 			if (getWidth() != 0 && getHeight() != 0) {
-				//System.out.println("onstart");
 				onInit();
 				isFirst = false;
 			}
 		} else {
-			//System.out.println("run");
 			onRun();
 			SurfaceHolder holder = this.getHolder();
 			if (!holder.getSurface().isValid()) return;
