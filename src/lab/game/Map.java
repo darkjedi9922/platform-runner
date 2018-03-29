@@ -7,6 +7,7 @@ import java.util.Random;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.View;
@@ -21,28 +22,40 @@ public class Map {
 	Bitmap platform;
 	Bitmap startPlatform;
 	MovingBackground background;
-	TripleBitmapBackground blockBackground;
-	Rect rect;
 	
 	public Map(View parent) {
 		this.parent = parent;
+		platform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.platform_blue);
+		startPlatform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.start_platform_blue);
 	}
 	public View getView() {
 		return parent;
 	}
+	public int getWidth() {
+		return parent.getWidth();
+	}
+	public int getHeight() {
+		return parent.getHeight();
+	}
 	public Rect getRect() {
-		return rect;
+		return new Rect(getLeft(), getTop(), getRight(), getBottom());
+	}
+	public int getLeft() {
+		return 0;
+	}
+	public int getTop() {
+		return 0;
+	}
+	public int getRight() {
+		return getWidth() - 1;
+	}
+	public int getBottom() {
+		return getHeight() - 1;
 	}
 	public void onStart() {
-		rect = new Rect(parent.getLeft(), parent.getTop(), parent.getRight(), parent.getBottom());
 		Bitmap bBitmap = BitmapFactory.decodeResource(parent.getResources(), R.drawable.background_blue);
-		background = new MovingBackground(bBitmap, 1);
-		background.setBitmapSize(bBitmap.getWidth() * rect.height() / bBitmap.getHeight(), rect.height());
-		Bitmap start = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_platform_start);
-		Bitmap center = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_platform_center);
-		Bitmap end = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_platform_end);
-		blockBackground = new TripleBitmapBackground(start, center, end);
-		
+		background = new MovingBackground(getRect(), bBitmap, 1);
+		background.setSize(bBitmap.getWidth() * getHeight() / bBitmap.getHeight(), getHeight());
 		generateStartBlock();
 		generateBlock();
 	}
@@ -54,28 +67,21 @@ public class Map {
 		generateBlock();
 	}
 	public void draw(Canvas canvas) {
-		background.draw(canvas, getRect());
+		canvas.drawColor(Color.BLACK);
+		background.draw(canvas);
 		for (Block block : blocks) block.draw(canvas);
 	}
 	public void generateStartBlock() {
-		int startWidth = blockBackground.getStartBitmap().getWidth();
-		int centerWidth = blockBackground.getCenterBitmap().getWidth();
-		int endWidth = blockBackground.getEndBitmap().getWidth();
-		int height = blockBackground.getCenterBitmap().getHeight();
-		Block block = new Block(blockBackground, startWidth + centerWidth * 25 + endWidth, height);
-		block.setGamePosition(200, rect.height() / 2);
+		Block block = new Block(startPlatform);
+		block.setGamePosition(200, getHeight() / 2);
 		blocks.add(block);
 		lastBlockRight = block.getGameRect().rect.right;
 	}
 	public void generateBlock() {
-		int startWidth = blockBackground.getStartBitmap().getWidth();
-		int centerWidth = blockBackground.getCenterBitmap().getWidth();
-		int endWidth = blockBackground.getEndBitmap().getWidth();
-		int height = blockBackground.getCenterBitmap().getHeight();
-		Block block = new Block(blockBackground, startWidth + centerWidth * 4 + endWidth, height);
+		Block block = new Block(platform);
 		try {
 			int x = rand.nextInt(1) + lastBlockRight + 200;
-			int y = rand.nextInt(rect.height() - block.getWidth() * 2) + block.getWidth() * 2;
+			int y = rand.nextInt(getHeight() - block.getWidth() * 2) + block.getWidth() * 2;
 			block.setGamePosition(x, y);
 			blocks.add(block);
 			lastBlockRight = block.getGameRect().rect.right;
@@ -84,7 +90,7 @@ public class Map {
 		}
 	}
 	public void checkGeneratingBlock() {
-		if (lastBlockRight < rect.width()) {
+		if (lastBlockRight < getWidth()) {
 			generateBlock();
 		}
 	}

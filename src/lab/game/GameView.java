@@ -69,10 +69,12 @@ public class GameView extends SurfaceView implements Runnable {
 	private void draw() {
 		if (isFirst) {
 			if (getWidth() != 0 && getHeight() != 0) {
+				//System.out.println("onstart");
 				onInit();
 				isFirst = false;
 			}
 		} else {
+			//System.out.println("run");
 			onRun();
 			SurfaceHolder holder = this.getHolder();
 			if (!holder.getSurface().isValid()) return;

@@ -1,17 +1,18 @@
 package lab.game;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 public class Block {
-	private Background background;
+	private Bitmap bitmap;
 	private QGameRect rect;
 	
-	public Block(Background background, int width, int height) {
-		this.background = background;
-		rect = new QGameRect(0, 0, width, height);
+	public Block(Bitmap bitmap) {
+		this.bitmap = bitmap;
+		rect = new QGameRect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 	}
 	public void draw(Canvas canvas) {
-		background.draw(canvas, rect.rect);
+		canvas.drawBitmap(bitmap, null, rect.rect, null);
 	}
 	public void setGamePosition(int x, int y) {
 		rect.setPosition(x, y);
@@ -19,14 +20,14 @@ public class Block {
 	public QGameRect getGameRect() {
 		return rect;
 	}
-	public Background getBackground() {
-		return background;
+	public Bitmap getBitmap() {
+		return bitmap;
 	}
 	public int getWidth() {
-		return rect.rect.width();
+		return bitmap.getWidth();
 	}
 	public int getHeight() {
-		return rect.rect.height();
+		return bitmap.getHeight();
 	}
 	public int getLeft() {
 		return rect.rect.left;

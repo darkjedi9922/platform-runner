@@ -2,20 +2,23 @@ package lab.game;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 
 public class Player {
 	
 	private QGameRect rect = new QGameRect(0, 0, 0, 0);
-	private Background background;
+	private Drawable background;
 	
-	public Player(Background background) {
+	public Player(Drawable background, int width, int height) {
 		setBackground(background);
+		rect.setSize(width, height);
 	}
-	public void setBackground(Background b) {
+	public void setBackground(Drawable b) {
 		background = b;
 	}
 	public void draw(Canvas canvas) {
-		background.draw(canvas, rect.rect);
+		background.setBounds(rect.rect);
+		background.draw(canvas);
 	}
 	public void setSize(int width, int height) {
 		rect.setSize(width, height);
