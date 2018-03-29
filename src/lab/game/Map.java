@@ -25,8 +25,8 @@ public class Map {
 	
 	public Map(View parent) {
 		this.parent = parent;
-		platform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.platform_blue);
-		startPlatform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.start_platform_blue);
+		platform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_platform);
+		startPlatform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_start_platform);
 	}
 	public View getView() {
 		return parent;
@@ -53,7 +53,7 @@ public class Map {
 		return getHeight() - 1;
 	}
 	public void onStart() {
-		Bitmap bBitmap = BitmapFactory.decodeResource(parent.getResources(), R.drawable.background_blue);
+		Bitmap bBitmap = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_background);
 		background = new MovingBackground(getRect(), bBitmap, 1);
 		background.setSize(bBitmap.getWidth() * getHeight() / bBitmap.getHeight(), getHeight());
 		generateStartBlock();

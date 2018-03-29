@@ -69,17 +69,17 @@ public class MainGameView extends GameView {
 	@Override 
 	protected void onInit() {
 		List<Bitmap> stand = new LinkedList<Bitmap>();
-		stand.add(BitmapFactory.decodeResource(getResources(), R.drawable.player_blue_stand));
+		stand.add(BitmapFactory.decodeResource(getResources(), R.drawable.blue_player_stand));
 		standDrawable = new AnimatedBitmapDrawable(stand, 1000);
 		List<Bitmap> walk = new LinkedList<Bitmap>();
-		walk.add(BitmapFactory.decodeResource(getResources(), R.drawable.player_blue_walk1));
-		walk.add(BitmapFactory.decodeResource(getResources(), R.drawable.player_blue_walk2));
+		walk.add(BitmapFactory.decodeResource(getResources(), R.drawable.blue_player_walk1));
+		walk.add(BitmapFactory.decodeResource(getResources(), R.drawable.blue_player_walk2));
 		walkDrawable = new AnimatedBitmapDrawable(walk, 8);
 		List<Bitmap> jump = new LinkedList<Bitmap>();
-		jump.add(BitmapFactory.decodeResource(getResources(), R.drawable.player_blue_jump));
+		jump.add(BitmapFactory.decodeResource(getResources(), R.drawable.blue_player_jump));
 		jumpDrawable = new AnimatedBitmapDrawable(jump, 1000);
 		List<Bitmap> fall = new LinkedList<Bitmap>();
-		fall.add(BitmapFactory.decodeResource(getResources(), R.drawable.player_blue_fall));
+		fall.add(BitmapFactory.decodeResource(getResources(), R.drawable.blue_player_fall));
 		fallDrawable = new AnimatedBitmapDrawable(fall, 1000);
 		
 		player = new Player(standDrawable, standDrawable.getCurrentBitmap().getWidth(), standDrawable.getCurrentBitmap().getHeight());
