@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Lab Game</string>
+    <string name="app_name">Platform Runner</string>
     <string name="score_text">Счет:</string>
     <string name="slash">/</string>
     <string name="zero">0</string>
