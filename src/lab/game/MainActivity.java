@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		scoreNumber = (TextView) findViewById(R.id.score_number);
 		scoreRecord = (TextView) findViewById(R.id.score_record);
 		ImageView pauseButton = (ImageView) findViewById(R.id.pauseButton);
+		MenuButton menuContinue = (MenuButton) findViewById(R.id.menu_continue);
 		
 		gameView.setListener(this);
 		tButton.setOnTouchListener(this);
@@ -44,6 +45,8 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		scoreSlash.setTypeface(comicFont);
 		scoreNumber.setTypeface(comicFont);
 		scoreRecord.setTypeface(comicFont);
+		
+		menuContinue.setEnabled(false);
 		
 		settings = this.getSharedPreferences("save", MODE_PRIVATE);
 		loadRecord();
@@ -72,8 +75,11 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			case R.id.pauseButton:
 				switch (event.getAction()) {
 					case MotionEvent.ACTION_DOWN:
-						if (!gameView.isSuspended()) gameView.suspend();
-						else gameView.resume();
+						if (!gameView.isSuspended()) {
+							gameView.suspend();
+						} else {
+							gameView.resume();
+						}
 						break;
 				}
 				break;

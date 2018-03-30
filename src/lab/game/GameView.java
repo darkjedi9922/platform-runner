@@ -69,7 +69,7 @@ public class GameView extends SurfaceView implements Runnable {
 		// To overriding
 	}
 	
-	private void draw() {
+	public void draw() {
 		if (isFirst) {
 			if (getWidth() != 0 && getHeight() != 0) {
 				onInit();

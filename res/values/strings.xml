@@ -5,5 +5,9 @@
     <string name="score_text">Счет:</string>
     <string name="slash">/</string>
     <string name="zero">0</string>
+    <string name="start_game">Начать игру</string>
+    <string name="continue_game">Продолжить</string>
+    <string name="empty_record">Обнулить рекорд</string>
+    <string name="exit">Выход</string>
 
 </resources>

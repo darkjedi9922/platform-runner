@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}">
+    tools:context="${relativePackage}.${activityClass}" >
 
     <lab.game.MainGameView
         android:id="@+id/game"
@@ -86,5 +86,37 @@
                 android:alpha="0"/>
         
     </LinearLayout>
+        	
+	<lab.game.MenuLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:orientation="vertical" >
+    
+	    <lab.game.MenuButton
+	        android:id="@+id/menu_start"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/start_game" />
+	    
+	    <lab.game.MenuButton
+	            android:id="@+id/menu_continue"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/continue_game"/>
+	    
+	    <lab.game.MenuButton
+	            android:id="@+id/menu_emptyRecord"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/empty_record"/>
+	    
+	    <lab.game.MenuButton 
+	            android:id="@+id/menu_exit"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/exit"/>
+    
+	</lab.game.MenuLayout>
     
 </FrameLayout>
