@@ -53,8 +53,8 @@ public class MainGameView extends GameView {
 	public void start() {
 		Block startBlock = map.getStartBlock();
 		player.setPosition(startBlock.getLeft() + 10, startBlock.getTop() - 1);
-		player.setBackground(walkDrawable);
-		currentPlayerBackground = walkDrawable;
+		player.setBackground(standDrawable);
+		currentPlayerBackground = standDrawable;
 		lastWalkedBlock = startBlock;
 		listener.gameStarted();
 	}
@@ -87,10 +87,15 @@ public class MainGameView extends GameView {
 		updatePlayerSize();
 		map.onStart();
 		start();
+		listener.gameInitialized();
 	}
 	@Override
 	protected void onRun() {
 		try {
+			if (currentPlayerBackground == standDrawable) {
+				player.setBackground(walkDrawable);
+				currentPlayerBackground = walkDrawable;
+			}
 			map.moveBlocks((int) (player.getWalkSpeed() + speedup));
 			map.checkGeneratingBlock();
 			speedup += speedupDelta;
@@ -134,7 +139,7 @@ public class MainGameView extends GameView {
 			currentPlayerBackground = fallDrawable;
 		} else {
 			// Полностью упал
-			restart();
+			listener.gameFailed();
 		}
 	}
 	

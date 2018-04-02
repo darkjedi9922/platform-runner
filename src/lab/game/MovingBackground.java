@@ -37,4 +37,7 @@ public class MovingBackground {
 		width = w;
 		height = h;
 	}
+	public void restart() {
+		currentX = 0;
+	}
 }

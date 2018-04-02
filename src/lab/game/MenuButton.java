@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
+import android.view.View.OnTouchListener;
 
 public class MenuButton extends Button {
 
@@ -43,13 +45,13 @@ public class MenuButton extends Button {
 				break;
 			}
 		}
-		return super.onTouchEvent(event);
+		return isTouched;
 	}
 	
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		updateTextColor();
+		updateTextColor(); 
 	}
 	
 	private void init() {

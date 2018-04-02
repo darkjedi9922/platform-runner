@@ -60,6 +60,7 @@ public class Map {
 		generateBlock();
 	}
 	public void onRestart() {
+		background.restart();
 		blocks.clear();
 		lastBlockRight = 0;
 		rand.setSeed(1);
