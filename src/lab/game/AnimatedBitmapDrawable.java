@@ -1,6 +1,7 @@
 package lab.game;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.graphics.Bitmap;
@@ -10,15 +11,18 @@ import android.graphics.drawable.Drawable;
 
 public class AnimatedBitmapDrawable extends Drawable {
 	
-	private List<Bitmap> bmps;
+	private List<Bitmap> bmps = new LinkedList<Bitmap>();
 	private Iterator<Bitmap> it;
 	private Bitmap current = null;
 	private int currentIteration = 0;
 	private int frequency = 0;
 	
-	public AnimatedBitmapDrawable(List<Bitmap> bmps, int frequency) {
-		this.bmps = bmps;
+	public AnimatedBitmapDrawable(int frequency) {
 		this.frequency = frequency;
+		it = bmps.iterator();
+	}
+	public void setBitmaps(List<Bitmap> bmps) {
+		this.bmps = bmps;
 		it = bmps.iterator();
 		next();
 	}
@@ -26,8 +30,10 @@ public class AnimatedBitmapDrawable extends Drawable {
 		return current;
 	}
 	private void next() {
-		if (!it.hasNext()) it = bmps.iterator();
-		current = it.next();
+		if (!bmps.isEmpty()) {
+			if (!it.hasNext()) it = bmps.iterator();
+			current = it.next();
+		} else current = null;
 	}
 	@Override
 	public void draw(Canvas canvas) {

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -19,14 +18,14 @@ public class Map {
 	private Random rand = new Random(1);
 	int lastBlockRight = 0;
 	Block blockToDelete = null;
-	Bitmap platform;
-	Bitmap startPlatform;
+	Level level = null;
 	MovingBackground background;
 	
 	public Map(View parent) {
 		this.parent = parent;
-		platform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_platform);
-		startPlatform = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_start_platform);
+	}
+	public void setLevel(Level l) {
+		level = l;
 	}
 	public View getView() {
 		return parent;
@@ -53,13 +52,10 @@ public class Map {
 		return getHeight() - 1;
 	}
 	public void onStart() {
-		Bitmap bBitmap = BitmapFactory.decodeResource(parent.getResources(), R.drawable.blue_background);
-		background = new MovingBackground(getRect(), bBitmap, 1);
-		background.setSize(bBitmap.getWidth() * getHeight() / bBitmap.getHeight(), getHeight());
-		generateStartBlock();
-		generateBlock();
-	}
-	public void onRestart() {
+		Bitmap bBitmap = level.getGameBackground();
+		background = new MovingBackground(bBitmap, 1);
+		background.setBounds(getRect());
+		background.setBitmapSize(bBitmap.getWidth() * getHeight() / bBitmap.getHeight(), getHeight());
 		background.restart();
 		blocks.clear();
 		lastBlockRight = 0;
@@ -73,13 +69,13 @@ public class Map {
 		for (Block block : blocks) block.draw(canvas);
 	}
 	public void generateStartBlock() {
-		Block block = new Block(startPlatform);
+		Block block = new Block(level.getStartPlatformBitmap());
 		block.setGamePosition(200, getHeight() / 2);
 		blocks.add(block);
 		lastBlockRight = block.getGameRect().rect.right;
 	}
 	public void generateBlock() {
-		Block block = new Block(platform);
+		Block block = new Block(level.getPlatformBitmap());
 		try {
 			int x = rand.nextInt(1) + lastBlockRight + 200;
 			int y = rand.nextInt(getHeight() - block.getWidth() * 2) + block.getWidth() * 2;

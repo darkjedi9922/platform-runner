@@ -37,9 +37,6 @@ public class GameView extends SurfaceView implements Runnable {
 	public void resume() {
 		suspended = false;
 	}
-	public void restart() {
-		// To overriding
-	}
 	
 	private void initialize() {
 		thread = new Thread(this);

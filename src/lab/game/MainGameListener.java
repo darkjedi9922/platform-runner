@@ -5,4 +5,5 @@ public interface MainGameListener {
 	void gameStarted();
 	void gameInitialized();
 	void gameFailed();
+	void setLevel();
 }

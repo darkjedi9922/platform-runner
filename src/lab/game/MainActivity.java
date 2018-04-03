@@ -1,5 +1,9 @@
 package lab.game;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -25,6 +29,9 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	private int points = 0;
 	private int record = 0;
 	private SharedPreferences settings;
+	private List<Level> levels = new LinkedList<Level>();
+	private Iterator<Level> levelIterator;
+	private boolean haveStarted = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,12 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		menuEmptyRecord = (MenuButton) findViewById(R.id.menu_emptyRecord);
 		MenuButton menuExit = (MenuButton) findViewById(R.id.menu_exit);
 		
+		levels.add(new BlueLevel(this));
+		levels.add(new YellowLevel(this));
+		levels.add(new GreenLevel(this));
+		levels.add(new PinkLevel(this));
+		levelIterator = levels.iterator();
+		
 		gameView.setListener(this);
 		tButton.setOnTouchListener(this);
 		pauseButton.setOnTouchListener(this);
@@ -60,6 +73,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		
 		settings = this.getSharedPreferences("save", MODE_PRIVATE);
 		loadRecord();
+		if (record == 0) menuEmptyRecord.setEnabled(false);
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -94,10 +108,12 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			}
 			case R.id.menu_start: {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
+					if (haveStarted) setLevel();
 					menu.setVisibility(View.INVISIBLE);
 					pauseButton.setVisibility(View.VISIBLE);
-					gameView.restart();
+					gameView.start();
 					gameView.resume();
+					haveStarted = true;
 				}
 				break;
 			}
@@ -114,6 +130,8 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			case R.id.menu_emptyRecord: {
 				if (event.getAction() == MotionEvent.ACTION_UP && menuEmptyRecord.isEnabled()) {
 					emptyRecord();
+					menuEmptyRecord.onTouchEvent(event);
+					menuEmptyRecord.setEnabled(false);
 				}
 				break;
 			}
@@ -149,10 +167,15 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 				pauseButton.setVisibility(View.INVISIBLE);
 				menu.setVisibility(View.VISIBLE);
 				menuContinue.setEnabled(false);
-				menuEmptyRecord.setEnabled(true);
+				if (record != 0) menuEmptyRecord.setEnabled(true);
 			}
 		});
 		gameView.suspend();
+	}
+	@Override
+	public void setLevel() {
+		if (!levelIterator.hasNext()) levelIterator = levels.iterator();
+		gameView.setLevel(levelIterator.next());
 	}
 	
 	private void updatePointsLabel() {

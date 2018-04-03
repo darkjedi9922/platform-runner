@@ -9,10 +9,6 @@ public class Player {
 	private QGameRect rect = new QGameRect(0, 0, 0, 0);
 	private Drawable background;
 	
-	public Player(Drawable background, int width, int height) {
-		setBackground(background);
-		rect.setSize(width, height);
-	}
 	public void setBackground(Drawable b) {
 		background = b;
 	}
