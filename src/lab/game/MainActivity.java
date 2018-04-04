@@ -1,5 +1,6 @@
 package lab.game;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,6 +34,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	private List<Level> levels = new LinkedList<Level>();
 	private Iterator<Level> levelIterator;
 	private boolean haveStarted = false;
+	private MediaPlayer bckgMusicPlayer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		menuContinue = (MenuButton) findViewById(R.id.menu_continue);
 		menuEmptyRecord = (MenuButton) findViewById(R.id.menu_emptyRecord);
 		MenuButton menuExit = (MenuButton) findViewById(R.id.menu_exit);
+		bckgMusicPlayer = MediaPlayer.create(this, R.raw.background_music);
 		
 		levels.add(new BlueLevel(this));
 		levels.add(new YellowLevel(this));
@@ -74,6 +78,11 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		settings = this.getSharedPreferences("save", MODE_PRIVATE);
 		loadRecord();
 		if (record == 0) menuEmptyRecord.setEnabled(false);
+	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -159,6 +168,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	@Override
 	public void gameInitialized() {
 		gameView.suspend();
+		bckgMusicPlayer.start();
 	}
 	@Override
 	public void gameFailed() {
