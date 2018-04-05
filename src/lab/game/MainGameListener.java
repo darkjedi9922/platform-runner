@@ -6,4 +6,6 @@ public interface MainGameListener {
 	void gameInitialized();
 	void gameFailed();
 	void setLevel();
+	void startedJumping();
+	void grounded();
 }

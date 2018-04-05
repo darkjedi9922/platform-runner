@@ -63,6 +63,7 @@ public class MainGameView extends GameView {
 			playerJumping = true;
 			player.setBackground(jumpDrawable);
 			currentPlayerBackground = jumpDrawable;
+			listener.startedJumping();
 		}
 	}
 	public void topButtonUp() {
@@ -161,6 +162,7 @@ public class MainGameView extends GameView {
 		return floor;
 	}
 	private void stopFalling() {
+		if (!playerFalling) return;
 		playerFalling = false;
 		player.setBackground(walkDrawable);
 		currentPlayerBackground = walkDrawable;
@@ -171,6 +173,7 @@ public class MainGameView extends GameView {
 			lastWalkedBlock = block;
 			listener.groundedOnNewBlock();
 		}
+		listener.grounded();
 	}
 	private void updatePlayerSize() {
 		player.setSize(currentPlayerBackground.getCurrentBitmap().getWidth(), currentPlayerBackground.getCurrentBitmap().getHeight());

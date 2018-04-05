@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +27,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	private ImageView pauseButton = null;
 	private MenuLayout menu = null;
 	private MenuButton menuContinue;
+	private MenuButton menuSwitchSound;
 	private MenuButton menuEmptyRecord;
 	private TextView scoreNumber;
 	private TextView scoreRecord;
@@ -34,7 +37,12 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	private List<Level> levels = new LinkedList<Level>();
 	private Iterator<Level> levelIterator;
 	private boolean haveStarted = false;
-	private MediaPlayer bckgMusicPlayer;
+	private boolean soundOn = true;
+	
+	private SoundPool sounds;
+	private int clickSoundId;
+	private int groundingSoundId;
+	private int fallSoundId;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +59,14 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		menu = (MenuLayout) findViewById(R.id.menu);
 		MenuButton menuStart = (MenuButton) findViewById(R.id.menu_start);
 		menuContinue = (MenuButton) findViewById(R.id.menu_continue);
+		menuSwitchSound = (MenuButton) findViewById(R.id.menu_switchSounds);
 		menuEmptyRecord = (MenuButton) findViewById(R.id.menu_emptyRecord);
 		MenuButton menuExit = (MenuButton) findViewById(R.id.menu_exit);
-		bckgMusicPlayer = MediaPlayer.create(this, R.raw.background_music);
+		
+		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+		clickSoundId = sounds.load(this, R.raw.click, 1);
+		groundingSoundId = sounds.load(this, R.raw.grounding, 1);
+		fallSoundId = sounds.load(this, R.raw.fall, 1);
 		
 		levels.add(new BlueLevel(this));
 		levels.add(new YellowLevel(this));
@@ -66,6 +79,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		pauseButton.setOnTouchListener(this);
 		menuStart.setOnTouchListener(this);
 		menuContinue.setOnTouchListener(this);
+		menuSwitchSound.setOnTouchListener(this);
 		menuEmptyRecord.setOnTouchListener(this);
 		menuExit.setOnTouchListener(this);
 		
@@ -77,12 +91,13 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		
 		settings = this.getSharedPreferences("save", MODE_PRIVATE);
 		loadRecord();
+		soundOn = loadSoundSetting();
 		if (record == 0) menuEmptyRecord.setEnabled(false);
+		if (!soundOn) menuSwitchSound.setText(R.string.on_sounds);
 	}
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -107,6 +122,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			}
 			case R.id.pauseButton: {
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (soundOn) playClickSound();
 					gameView.suspend();
 					pauseButton.setVisibility(View.INVISIBLE);
 					menu.setVisibility(View.VISIBLE);
@@ -117,6 +133,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			}
 			case R.id.menu_start: {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
+					if (soundOn) playClickSound();
 					if (haveStarted) setLevel();
 					menu.setVisibility(View.INVISIBLE);
 					pauseButton.setVisibility(View.VISIBLE);
@@ -128,6 +145,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			}
 			case R.id.menu_continue: {
 				if (event.getAction() == MotionEvent.ACTION_UP && menuContinue.isEnabled()) {
+					if (soundOn) playClickSound();
 					menuContinue.onTouchEvent(event); // событие action_up само почему-то не вызывается
 					menuContinue.setEnabled(false);
 					menu.setVisibility(View.INVISIBLE);
@@ -136,8 +154,24 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 				}
 				break;
 			}
+			case R.id.menu_switchSounds: {
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					if (soundOn) {
+						soundOn = false;
+						menuSwitchSound.setText(R.string.on_sounds);
+						saveSoundSetting(false);
+					} else {
+						soundOn = true;
+						menuSwitchSound.setText(R.string.off_sounds);
+						saveSoundSetting(true);
+						playClickSound();
+					}
+				}
+				break;
+			}
 			case R.id.menu_emptyRecord: {
 				if (event.getAction() == MotionEvent.ACTION_UP && menuEmptyRecord.isEnabled()) {
+					if (soundOn) playClickSound();
 					emptyRecord();
 					menuEmptyRecord.onTouchEvent(event);
 					menuEmptyRecord.setEnabled(false);
@@ -145,7 +179,10 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 				break;
 			}
 			case R.id.menu_exit: {
-				if (event.getAction() == MotionEvent.ACTION_UP) this.finish();
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					if (soundOn) playClickSound();
+					this.finish();
+				}
 				break;
 			}
 		}
@@ -157,6 +194,10 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		updatePointsLabel();
 	}
 	@Override
+	public void startedJumping() {
+		// Here is nothing to do
+	}
+	@Override
 	public void groundedOnNewBlock() {
 		points += 1;
 		if (points > record) {
@@ -166,12 +207,16 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		updatePointsLabel();
 	}
 	@Override
+	public void grounded() {
+		if (soundOn) sounds.play(groundingSoundId, 1, 1, 0, 0, 1);
+	}
+	@Override
 	public void gameInitialized() {
 		gameView.suspend();
-		bckgMusicPlayer.start();
 	}
 	@Override
 	public void gameFailed() {
+		if (soundOn) sounds.play(fallSoundId, 1, 1, 0, 0, 1);
 		this.runOnUiThread(new Runnable() {
 			public void run() {
 				pauseButton.setVisibility(View.INVISIBLE);
@@ -204,6 +249,14 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		editor.putInt("record", record);
 		editor.apply();
 	}
+	private boolean loadSoundSetting() {
+		return settings.getBoolean("sound", true);
+	}
+	private void saveSoundSetting(boolean value) {
+		Editor editor = settings.edit();
+		editor.putBoolean("sound", value);
+		editor.apply();
+	}
 	private void emptyRecord() {
 		Editor editor = settings.edit();
 		editor.putInt("record", 0);
@@ -212,5 +265,8 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		record = 0;
 		scoreNumber.setText("0");
 		scoreRecord.setText("0");
+	}
+	private void playClickSound() {
+		sounds.play(clickSoundId, 1, 1, 0, 0, 1);
 	}
 }

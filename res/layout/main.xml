@@ -109,6 +109,12 @@
 	            android:enabled="false" />
 	    
 	    <lab.game.MenuButton
+	            android:id="@+id/menu_switchSounds"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:text="@string/off_sounds"/>
+	    
+	    <lab.game.MenuButton
 	            android:id="@+id/menu_emptyRecord"
 	            android:layout_width="match_parent"
 	            android:layout_height="wrap_content"

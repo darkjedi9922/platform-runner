@@ -9,5 +9,7 @@
     <string name="continue_game">Продолжить</string>
     <string name="empty_record">Обнулить рекорд</string>
     <string name="exit">Выход</string>
+    <string name="off_sounds">Выключить звук</string>
+    <string name="on_sounds">Включить звук</string>
 
 </resources>
