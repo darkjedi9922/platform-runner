@@ -7,5 +7,4 @@ public interface MainGameListener {
 	void gameFailed();
 	void setLevel();
 	void startedJumping();
-	void grounded();
 }

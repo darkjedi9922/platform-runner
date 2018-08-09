@@ -41,6 +41,7 @@ public class MenuButton extends Button {
 				break;
 			case MotionEvent.ACTION_UP:
 				isTouched = false;
+				Game.sounds.playClick();
 				updateTextColor();
 				break;
 			}

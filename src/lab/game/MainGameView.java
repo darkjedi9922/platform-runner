@@ -109,7 +109,7 @@ public class MainGameView extends GameView {
 			map.checkGeneratingBlock();
 			speedup += speedupDelta;
 		} catch (Exception e) {
-			// На телефоне почему-то ошибка
+			// РќР° С‚РµР»РµС„РѕРЅРµ РїРѕС‡РµРјСѓ-С‚Рѕ РѕС€РёР±РєР°
 		}
 		
 		checkPlayerFalling();
@@ -127,7 +127,7 @@ public class MainGameView extends GameView {
 		if (floor != -1) {
 			if (player.getBottom() < floor) {
 				if (player.getBottom() + player.getFallSpeed() < floor) {
-					// Еще есть куда падать
+					// Р•С‰Рµ РµСЃС‚СЊ РєСѓРґР° РїР°РґР°С‚СЊ
 					player.move(0, player.getFallSpeed());
 					playerFalling = true;
 					player.setBackground(fallDrawable);
@@ -141,13 +141,13 @@ public class MainGameView extends GameView {
 				stopFalling();
 			}
 		} else if (player.getTop() <= map.getRect().bottom) {
-			// Падаем прямо до конца
+			// РџР°РґР°РµРј РїСЂСЏРјРѕ РґРѕ РєРѕРЅС†Р°
 			player.move(0, player.getFallSpeed());
 			playerFalling = true;
 			player.setBackground(fallDrawable);
 			currentPlayerBackground = fallDrawable;
 		} else {
-			// Полностью упал
+			// РџРѕР»РЅРѕСЃС‚СЊСЋ СѓРїР°Р»
 			listener.gameFailed();
 		}
 	}
@@ -166,14 +166,14 @@ public class MainGameView extends GameView {
 		playerFalling = false;
 		player.setBackground(walkDrawable);
 		currentPlayerBackground = walkDrawable;
-		// Добавляем очко если приземлились на новый блок
+		// Р”РѕР±Р°РІР»СЏРµРј РѕС‡РєРѕ РµСЃР»Рё РїСЂРёР·РµРјР»РёР»РёСЃСЊ РЅР° РЅРѕРІС‹Р№ Р±Р»РѕРє
 		Block block = map.findBlock(player.getLeft(), player.getBottom() + 1);
 		if (block == null) block = map.findBlock(player.getRight(), player.getBottom() + 1);
 		if (block != null && block != lastWalkedBlock) {
 			lastWalkedBlock = block;
 			listener.groundedOnNewBlock();
 		}
-		listener.grounded();
+		Game.sounds.playGrounded();
 	}
 	private void updatePlayerSize() {
 		player.setSize(currentPlayerBackground.getCurrentBitmap().getWidth(), currentPlayerBackground.getCurrentBitmap().getHeight());
