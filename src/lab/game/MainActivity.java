@@ -34,9 +34,6 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	private int points = 0;
 	private int record = 0;
 	private SharedPreferences settings;
-	private List<Level> levels = new LinkedList<Level>();
-	private Iterator<Level> levelIterator;
-	private boolean haveStarted = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +55,10 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		MenuButton menuExit = (MenuButton) findViewById(R.id.menu_exit);
 		
 		Game.sounds = new Sounds(this);
-		
-		levels.add(new BlueLevel(this));
-		levels.add(new YellowLevel(this));
-		levels.add(new GreenLevel(this));
-		levels.add(new PinkLevel(this));
-		levelIterator = levels.iterator();
+		Game.map.addLevel(new BlueLevel(this));
+		Game.map.addLevel(new YellowLevel(this));
+		Game.map.addLevel(new GreenLevel(this));
+		Game.map.addLevel(new PinkLevel(this));
 		
 		gameView.setListener(this);
 		tButton.setOnTouchListener(this);
@@ -95,15 +90,12 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		switch (v.getId()) {
-			// ������ ����� ����
 			case R.id.gameTButton: {
 				switch (event.getAction()) {
-					// ������
 					case MotionEvent.ACTION_DOWN: {
 						gameView.topButtonDown();
 						break;
 					}
-					// ��������
 					case MotionEvent.ACTION_UP: {
 						gameView.topButtonUp();
 						break;
@@ -124,12 +116,12 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 			}
 			case R.id.menu_start: {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					if (haveStarted) setLevel();
 					menu.setVisibility(View.INVISIBLE);
+					if (Game.startTimes != 0) Game.map.nextLevel();
 					pauseButton.setVisibility(View.VISIBLE);
 					gameView.start();
 					gameView.resume();
-					haveStarted = true;
+					Game.startTimes++;
 				}
 				break;
 			}
@@ -203,18 +195,18 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 		this.runOnUiThread(new Runnable() {
 			public void run() {
 				pauseButton.setVisibility(View.INVISIBLE);
-				menu.setVisibility(View.VISIBLE);
-				menuContinue.setEnabled(false);
-				if (record != 0) menuEmptyRecord.setEnabled(true);
+				menu.getMenu().setVisibility(View.VISIBLE);
+				menu.getContinueButton().setEnabled(false);
+				if (record != 0) menu.getEmptyRecordButton().setEnabled(true);
 			}
 		});
 		gameView.suspend();
 	}
-	@Override
-	public void setLevel() {
+	/*@Override
+	public void nextLevel() {
 		if (!levelIterator.hasNext()) levelIterator = levels.iterator();
 		gameView.setLevel(levelIterator.next());
-	}
+	}*/
 	
 	private void updatePointsLabel() {
 		this.runOnUiThread(new Runnable() {

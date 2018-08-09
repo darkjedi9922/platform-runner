@@ -7,10 +7,46 @@ import android.graphics.drawable.Drawable;
 public class Player {
 	
 	private QGameRect rect = new QGameRect(0, 0, 0, 0);
-	private Drawable background;
+	private Drawable background = null;
 	
+	private AnimatedBitmapDrawable standDrawable;
+	private AnimatedBitmapDrawable walkDrawable;
+	private AnimatedBitmapDrawable jumpDrawable;
+	private AnimatedBitmapDrawable fallDrawable;
+	
+	public Drawable getBackground() {
+		return background;
+	}
 	public void setBackground(Drawable b) {
 		background = b;
+	}
+	
+	public AnimatedBitmapDrawable getStandDrawable() {
+		return standDrawable;
+	}
+	public void setStandDrawable(AnimatedBitmapDrawable standDrawable) {
+		this.standDrawable = standDrawable;
+	}
+	
+	public AnimatedBitmapDrawable getWalkDrawable() {
+		return walkDrawable;
+	}
+	public void setWalkDrawable(AnimatedBitmapDrawable walkDrawable) {
+		this.walkDrawable = walkDrawable;
+	}
+	
+	
+	public AnimatedBitmapDrawable getJumpDrawable() {
+		return jumpDrawable;
+	}
+	public void setJumpDrawable(AnimatedBitmapDrawable jumpDrawable) {
+		this.jumpDrawable = jumpDrawable;
+	}
+	public AnimatedBitmapDrawable getFallDrawable() {
+		return fallDrawable;
+	}
+	public void setFallDrawable(AnimatedBitmapDrawable fallDrawable) {
+		this.fallDrawable = fallDrawable;
 	}
 	public void draw(Canvas canvas) {
 		background.setBounds(rect.rect);

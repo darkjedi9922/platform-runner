@@ -1,5 +1,6 @@
 package lab.game;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -19,13 +20,50 @@ public class Map {
 	int lastBlockRight = 0;
 	Block blockToDelete = null;
 	Level level = null;
+	
 	MovingBackground background;
+	private Player player = null;
+	private List<Level> levels = new LinkedList<Level>();
+	private Iterator<Level> levelIterator = null;
 	
 	public Map(View parent) {
 		this.parent = parent;
 	}
-	public void setLevel(Level l) {
+	public Player getPlayer() {
+		return player;
+	}
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	public void setLevel(Level l) 
+	{
 		level = l;
+		
+		List<Bitmap> stand = new LinkedList<Bitmap>();
+		stand.add(level.getPlayerStandBitmap());
+		getPlayer().getStandDrawable().setBitmaps(stand);
+		
+		List<Bitmap> walk = new LinkedList<Bitmap>();
+		walk.add(level.getPlayerWalk1Bitmap());
+		walk.add(level.getPlayerWalk2Bitmap());
+		getPlayer().getWalkDrawable().setBitmaps(walk);
+		
+		List<Bitmap> jump = new LinkedList<Bitmap>();
+		jump.add(level.getPlayerJumpBitmap());
+		getPlayer().getJumpDrawable().setBitmaps(jump);
+		
+		List<Bitmap> fall = new LinkedList<Bitmap>();
+		fall.add(level.getPlayerFallBitmap());
+		getPlayer().getFallDrawable().setBitmaps(fall);
+	}
+	public void addLevel(Level level)
+	{
+		levels.add(level);
+	}
+	public void nextLevel()
+	{
+		if (levelIterator == null || !levelIterator.hasNext()) levelIterator = levels.iterator();
+		setLevel(levelIterator.next());
 	}
 	public View getView() {
 		return parent;

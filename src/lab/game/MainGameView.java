@@ -11,8 +11,6 @@ import android.util.AttributeSet;
 
 public class MainGameView extends GameView {
 	
-	private Map map = new Map(this);
-	private Player player = null;
 	private boolean playerFalling = false;
 	private boolean playerJumping = false;
 	private double speedup = 0;
@@ -20,40 +18,26 @@ public class MainGameView extends GameView {
 	private MainGameListener listener = null;
 	private Block lastWalkedBlock = null;
 	
-	private AnimatedBitmapDrawable currentPlayerBackground;
-	private AnimatedBitmapDrawable standDrawable;
-	private AnimatedBitmapDrawable walkDrawable;
-	private AnimatedBitmapDrawable jumpDrawable;
-	private AnimatedBitmapDrawable fallDrawable;
-	
 	public MainGameView(Context context) {
 		super(context);
+		constructor();
 	}
 	public MainGameView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		constructor();
 	}
 	public MainGameView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		constructor();
 	}
+	
+	private void constructor()
+	{
+		Game.map = new Map(this);
+	}
+	
 	public void setLevel(Level level) {
-		map.setLevel(level);
 		
-		List<Bitmap> stand = new LinkedList<Bitmap>();
-		stand.add(level.getPlayerStandBitmap());
-		standDrawable.setBitmaps(stand);
-		
-		List<Bitmap> walk = new LinkedList<Bitmap>();
-		walk.add(level.getPlayerWalk1Bitmap());
-		walk.add(level.getPlayerWalk2Bitmap());
-		walkDrawable.setBitmaps(walk);
-		
-		List<Bitmap> jump = new LinkedList<Bitmap>();
-		jump.add(level.getPlayerJumpBitmap());
-		jumpDrawable.setBitmaps(jump);
-		
-		List<Bitmap> fall = new LinkedList<Bitmap>();
-		fall.add(level.getPlayerFallBitmap());
-		fallDrawable.setBitmaps(fall);
 	}
 	public void setListener(MainGameListener l) {
 		listener = l;
@@ -61,8 +45,7 @@ public class MainGameView extends GameView {
 	public void topButtonDown() {
 		if (!playerFalling) {
 			playerJumping = true;
-			player.setBackground(jumpDrawable);
-			currentPlayerBackground = jumpDrawable;
+			Game.map.getPlayer().setBackground(Game.map.getPlayer().getJumpDrawable());
 			listener.startedJumping();
 		}
 	}
@@ -72,41 +55,39 @@ public class MainGameView extends GameView {
 	
 	@Override
 	public void start() {
-		map.onStart();
+		Game.map.onStart();
 		playerJumping = false;
 		playerFalling = false;
 		speedup = 0;
-		Block startBlock = map.getStartBlock();
-		player.setPosition(startBlock.getLeft() + 10, startBlock.getTop() - 1);
-		player.setBackground(standDrawable);
-		currentPlayerBackground = standDrawable;
+		Block startBlock = Game.map.getStartBlock();
+		Game.map.getPlayer().setPosition(startBlock.getLeft() + 10, startBlock.getTop() - 1);
+		Game.map.getPlayer().setBackground(Game.map.getPlayer().getStandDrawable());
 		updatePlayerSize();
 		lastWalkedBlock = startBlock;
 		listener.gameStarted();
 	}
 	@Override
 	protected void onInit() {
-		standDrawable = new AnimatedBitmapDrawable(1000);
-		walkDrawable = new AnimatedBitmapDrawable(8);
-		jumpDrawable = new AnimatedBitmapDrawable(1000);
-		fallDrawable = new AnimatedBitmapDrawable(1000);
+		Game.map.setPlayer(new Player());
+		Game.map.getPlayer().setStandDrawable(new AnimatedBitmapDrawable(1000));
+		Game.map.getPlayer().setWalkDrawable(new AnimatedBitmapDrawable(8));
+		Game.map.getPlayer().setJumpDrawable(new AnimatedBitmapDrawable(1000));
+		Game.map.getPlayer().setFallDrawable(new AnimatedBitmapDrawable(1000));
 		
-		listener.setLevel();
+		Game.map.nextLevel();
 		
-		player = new Player();
-		map.onStart();
+		Game.map.onStart();
 		start();
 		listener.gameInitialized();
 	}
 	@Override
 	protected void onRun() {
 		try {
-			if (currentPlayerBackground == standDrawable) {
-				player.setBackground(walkDrawable);
-				currentPlayerBackground = walkDrawable;
+			if (Game.map.getPlayer().getBackground() == Game.map.getPlayer().getStandDrawable()) {
+				Game.map.getPlayer().setBackground(Game.map.getPlayer().getWalkDrawable());
 			}
-			map.moveBlocks((int) (player.getWalkSpeed() + speedup));
-			map.checkGeneratingBlock();
+			Game.map.moveBlocks((int) (Game.map.getPlayer().getWalkSpeed() + speedup));
+			Game.map.checkGeneratingBlock();
 			speedup += speedupDelta;
 		} catch (Exception e) {
 			// На телефоне почему-то ошибка
@@ -114,38 +95,36 @@ public class MainGameView extends GameView {
 		
 		checkPlayerFalling();
 		checkPlayerJumping();
-		player.setSize(currentPlayerBackground.getCurrentBitmap().getWidth(), currentPlayerBackground.getCurrentBitmap().getHeight());
+		updatePlayerSize();
 	}
 	@Override
 	protected void onPaint(Canvas canvas) {
-		map.draw(canvas);
-		player.draw(canvas);
+		Game.map.draw(canvas);
+		Game.map.getPlayer().draw(canvas);
 	}
 	private void checkPlayerFalling() {
 		if (playerJumping) return;
 		int floor = findPlayerFloor();
 		if (floor != -1) {
-			if (player.getBottom() < floor) {
-				if (player.getBottom() + player.getFallSpeed() < floor) {
+			if (Game.map.getPlayer().getBottom() < floor) {
+				if (Game.map.getPlayer().getBottom() + Game.map.getPlayer().getFallSpeed() < floor) {
 					// Еще есть куда падать
-					player.move(0, player.getFallSpeed());
+					Game.map.getPlayer().move(0, Game.map.getPlayer().getFallSpeed());
 					playerFalling = true;
-					player.setBackground(fallDrawable);
-					currentPlayerBackground = fallDrawable;
+					Game.map.getPlayer().setBackground(Game.map.getPlayer().getFallDrawable());
 				} else {
-					player.moveTo(player.getLeft(), floor);
+					Game.map.getPlayer().moveTo(Game.map.getPlayer().getLeft(), floor);
 					stopFalling();
 				}
 			} else {
-				player.moveTo(player.getLeft(), floor);
+				Game.map.getPlayer().moveTo(Game.map.getPlayer().getLeft(), floor);
 				stopFalling();
 			}
-		} else if (player.getTop() <= map.getRect().bottom) {
+		} else if (Game.map.getPlayer().getTop() <= Game.map.getRect().bottom) {
 			// Падаем прямо до конца
-			player.move(0, player.getFallSpeed());
+			Game.map.getPlayer().move(0, Game.map.getPlayer().getFallSpeed());
 			playerFalling = true;
-			player.setBackground(fallDrawable);
-			currentPlayerBackground = fallDrawable;
+			Game.map.getPlayer().setBackground(Game.map.getPlayer().getFallDrawable());
 		} else {
 			// Полностью упал
 			listener.gameFailed();
@@ -154,21 +133,20 @@ public class MainGameView extends GameView {
 	
 	private void checkPlayerJumping() {
 		if (!playerJumping || playerFalling) return;	
-		player.move(0, -player.getJumpSpeed());
+		Game.map.getPlayer().move(0, -Game.map.getPlayer().getJumpSpeed());
 	}
 	private int findPlayerFloor() {
-		int floor = map.findFloor(player.getLeftBottom());
-		if (floor == -1) floor = map.findFloor(player.getRightBottom());
+		int floor = Game.map.findFloor(Game.map.getPlayer().getLeftBottom());
+		if (floor == -1) floor = Game.map.findFloor(Game.map.getPlayer().getRightBottom());
 		return floor;
 	}
 	private void stopFalling() {
 		if (!playerFalling) return;
 		playerFalling = false;
-		player.setBackground(walkDrawable);
-		currentPlayerBackground = walkDrawable;
+		Game.map.getPlayer().setBackground(Game.map.getPlayer().getWalkDrawable());
 		// Добавляем очко если приземлились на новый блок
-		Block block = map.findBlock(player.getLeft(), player.getBottom() + 1);
-		if (block == null) block = map.findBlock(player.getRight(), player.getBottom() + 1);
+		Block block = Game.map.findBlock(Game.map.getPlayer().getLeft(), Game.map.getPlayer().getBottom() + 1);
+		if (block == null) block = Game.map.findBlock(Game.map.getPlayer().getRight(), Game.map.getPlayer().getBottom() + 1);
 		if (block != null && block != lastWalkedBlock) {
 			lastWalkedBlock = block;
 			listener.groundedOnNewBlock();
@@ -176,6 +154,7 @@ public class MainGameView extends GameView {
 		Game.sounds.playGrounded();
 	}
 	private void updatePlayerSize() {
-		player.setSize(currentPlayerBackground.getCurrentBitmap().getWidth(), currentPlayerBackground.getCurrentBitmap().getHeight());
+		AnimatedBitmapDrawable playerBackground = (AnimatedBitmapDrawable) Game.map.getPlayer().getBackground();
+		Game.map.getPlayer().setSize(playerBackground.getCurrentBitmap().getWidth(), playerBackground.getCurrentBitmap().getHeight());
 	}
 }
