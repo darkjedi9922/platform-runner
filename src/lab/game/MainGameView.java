@@ -42,8 +42,11 @@ public class MainGameView extends GameView {
 			listener.startedJumping();
 		}
 	}
-	public void topButtonUp() {
+	public void fallPlayer() {
 		playerJumping = false;
+	}
+	public void topButtonUp() {
+		fallPlayer();
 	}
 	
 	@Override
@@ -91,6 +94,8 @@ public class MainGameView extends GameView {
 		checkPlayerFalling();
 		checkPlayerJumping();
 		updatePlayerSize();
+		
+		if (Game.map.getPlayer().getBottom() < -15) fallPlayer();
 	}
 	@Override
 	protected void onPaint(Canvas canvas) {
