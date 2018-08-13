@@ -35,7 +35,6 @@ public class Player {
 		this.walkDrawable = walkDrawable;
 	}
 	
-	
 	public AnimatedBitmapDrawable getJumpDrawable() {
 		return jumpDrawable;
 	}
@@ -83,21 +82,26 @@ public class Player {
 		return new Point(rect.rect.right, rect.rect.bottom);
 	}
 	public int getWalkSpeed() {
-		return 6;
+		return (int) (6 * Game.WIDTH_K);
 	}
 	public int getFallSpeed() {
-		return 10;
+		return (int) (10 * Game.HEIGHT_K);
 	}
 	public int getJumpMaxHeight() {
 		return 225;
 	}
 	public int getJumpSpeed() {
-		return 10;
+		return (int) (10 * Game.HEIGHT_K);
 	}
 	public void move(int dx, int dy) {
 		rect.rect.offset(dx, dy);
 	}
 	public void moveTo(int left, int bottom) {
 		rect.setPosition(left, bottom);
+	}
+	public void setRelativeSizeWidth(int originWidth, int originHeight, float widthK) {
+		int width = (int) (originWidth * widthK);
+		int height = (int) (width * originHeight / originWidth);
+		this.setSize(width, height);
 	}
 }

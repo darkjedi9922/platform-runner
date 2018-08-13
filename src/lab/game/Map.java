@@ -109,12 +109,16 @@ public class Map {
 		for (Block block : blocks) block.draw(canvas);
 	}
 	public void generateStartBlock() {
-		startBlock = new Block(level.getStartPlatformBitmap());
+		Bitmap bitmap = level.getStartPlatformBitmap();
+		startBlock = new Block(bitmap);
+		startBlock.setRelativeSizeWidth(bitmap.getWidth(), bitmap.getHeight(), Game.WIDTH_K);
 		startBlock.setGamePosition(200, getHeight() / 2);
 		startBlockRight = lastBlockRight = startBlock.getGameRect().rect.right;
 	}
 	public Block generateBlock() {
-		Block block = new Block(level.getPlatformBitmap());
+		Bitmap bitmap = level.getPlatformBitmap();
+		Block block = new Block(bitmap);
+		block.setRelativeSizeWidth(bitmap.getWidth(), bitmap.getHeight(), Game.WIDTH_K);
 		try {
 			Point coords = this.randBlockCoords(block);
 			block.setGamePosition(coords.x, coords.y);
@@ -146,7 +150,7 @@ public class Map {
 		lastBlockRight -= speed;
 	}
 	private Point randBlockCoords(Block block) {
-		int x = rand.nextInt(1) + lastBlockRight + 200;
+		int x = rand.nextInt(1) + lastBlockRight + (int) (200 * Game.WIDTH_K);
 		int y = rand.nextInt(getHeight() - block.getWidth() * 2) + block.getWidth() * 2;
 		return new Point(x, y);
 	}

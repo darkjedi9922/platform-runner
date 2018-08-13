@@ -1,11 +1,7 @@
 package lab.game;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
@@ -13,8 +9,8 @@ public class MainGameView extends GameView {
 	
 	private boolean playerFalling = false;
 	private boolean playerJumping = false;
-	private double speedup = 0;
-	private double speedupDelta = 0.005;
+	private float speedup = 0;
+	private float speedupDelta = (float) (0.005 * Game.WIDTH_K);
 	private MainGameListener listener = null;
 	private Block lastWalkedBlock = null;
 	
@@ -36,9 +32,6 @@ public class MainGameView extends GameView {
 		Game.map = new Map(this);
 	}
 	
-	public void setLevel(Level level) {
-		
-	}
 	public void setListener(MainGameListener l) {
 		listener = l;
 	}
@@ -68,9 +61,12 @@ public class MainGameView extends GameView {
 	}
 	@Override
 	protected void onInit() {
+		Game.WIDTH_K = this.getWidth() / Game.ORIGIN_WIDTH;
+		Game.HEIGHT_K = this.getHeight() / Game.ORIGIN_HEIGHT;
+		
 		Game.map.setPlayer(new Player());
 		Game.map.getPlayer().setStandDrawable(new AnimatedBitmapDrawable(1000));
-		Game.map.getPlayer().setWalkDrawable(new AnimatedBitmapDrawable(8));
+		Game.map.getPlayer().setWalkDrawable(new AnimatedBitmapDrawable((int) (8 / Game.WIDTH_K)));
 		Game.map.getPlayer().setJumpDrawable(new AnimatedBitmapDrawable(1000));
 		Game.map.getPlayer().setFallDrawable(new AnimatedBitmapDrawable(1000));
 		
@@ -154,6 +150,7 @@ public class MainGameView extends GameView {
 	}
 	private void updatePlayerSize() {
 		AnimatedBitmapDrawable playerBackground = (AnimatedBitmapDrawable) Game.map.getPlayer().getBackground();
-		Game.map.getPlayer().setSize(playerBackground.getCurrentBitmap().getWidth(), playerBackground.getCurrentBitmap().getHeight());
+		Bitmap bitmap = playerBackground.getCurrentBitmap();
+		Game.map.getPlayer().setRelativeSizeWidth(bitmap.getWidth(), bitmap.getHeight(), Game.WIDTH_K);
 	}
 }

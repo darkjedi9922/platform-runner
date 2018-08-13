@@ -1,18 +1,10 @@
 package lab.game;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,7 +26,7 @@ public class MainActivity extends Activity implements OnTouchListener, MainGameL
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		Game.cycle = (MainGameView) this.findViewById(R.id.game);
 		Button tButton = (Button) this.findViewById(R.id.gameTButton);
 		TextView scoreText = (TextView) findViewById(R.id.score_text);

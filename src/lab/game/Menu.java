@@ -1,7 +1,5 @@
 package lab.game;
 
-import java.io.Console;
-
 import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;

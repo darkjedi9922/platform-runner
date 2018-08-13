@@ -41,4 +41,9 @@ public class Block {
 	public int getBottom() {
 		return rect.rect.bottom;
 	}
+	public void setRelativeSizeWidth(int originWidth, int originHeight, float widthK) {
+		int width = (int) (originWidth * widthK);
+		int height = (int) (width * originHeight / originWidth);
+		this.rect.setSize(width, height);
+	}
 }
