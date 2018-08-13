@@ -1,5 +1,9 @@
 package lab.game;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -11,14 +15,19 @@ public class Sounds
 	
 	private int clickSoundId;
 	private int groundingSoundId;
-	private int fallSoundId;
+	
+	private List<Integer> fallSoundIds = new LinkedList<Integer>();
+	private Iterator<Integer> fallSoundIt = null;
 	
 	public Sounds(Context context)
 	{
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
 		clickSoundId = sounds.load(context, R.raw.click, 1);
 		groundingSoundId = sounds.load(context, R.raw.grounding, 1);
-		fallSoundId = sounds.load(context, R.raw.fall, 1);
+		fallSoundIds.add(new Integer(sounds.load(context, R.raw.fall1, 1)));
+		fallSoundIds.add(new Integer(sounds.load(context, R.raw.fall4, 1)));
+		fallSoundIds.add(new Integer(sounds.load(context, R.raw.fall2, 1)));
+		fallSoundIds.add(new Integer(sounds.load(context, R.raw.fall3, 1)));
 	}
 	
 	public void setEnabled(boolean enabled)
@@ -38,7 +47,10 @@ public class Sounds
 	
 	public void playFall()
 	{
-		if (enabled) sounds.play(fallSoundId, 1, 1, 0, 0, 1);
+		if (enabled) {
+			if (fallSoundIt == null || !fallSoundIt.hasNext()) fallSoundIt = fallSoundIds.iterator();
+			sounds.play(fallSoundIt.next().intValue(), 1, 1, 0, 0, 1);
+		}
 	}
 	
 	public void playClick() 
