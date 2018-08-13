@@ -15,10 +15,11 @@ import android.view.View;
 public class Map {
 
 	private View parent;
+	private Block startBlock = null;
 	private List<Block> blocks = new LinkedList<Block>();
 	private Random rand = new Random(1);
 	int lastBlockRight = 0;
-	Block blockToDelete = null;
+	int startBlockRight = 0;
 	Level level = null;
 	
 	MovingBackground background;
@@ -99,48 +100,59 @@ public class Map {
 		lastBlockRight = 0;
 		rand.setSeed(1);
 		generateStartBlock();
-		generateBlock();
+		generateBlocks();
 	}
 	public void draw(Canvas canvas) {
 		canvas.drawColor(Color.BLACK);
 		background.draw(canvas);
+		if (startBlock != null) startBlock.draw(canvas);
 		for (Block block : blocks) block.draw(canvas);
 	}
 	public void generateStartBlock() {
-		Block block = new Block(level.getStartPlatformBitmap());
-		block.setGamePosition(200, getHeight() / 2);
-		blocks.add(block);
-		lastBlockRight = block.getGameRect().rect.right;
+		startBlock = new Block(level.getStartPlatformBitmap());
+		startBlock.setGamePosition(200, getHeight() / 2);
+		startBlockRight = lastBlockRight = startBlock.getGameRect().rect.right;
 	}
-	public void generateBlock() {
+	public Block generateBlock() {
 		Block block = new Block(level.getPlatformBitmap());
 		try {
-			int x = rand.nextInt(1) + lastBlockRight + 200;
-			int y = rand.nextInt(getHeight() - block.getWidth() * 2) + block.getWidth() * 2;
-			block.setGamePosition(x, y);
+			Point coords = this.randBlockCoords(block);
+			block.setGamePosition(coords.x, coords.y);
 			blocks.add(block);
 			lastBlockRight = block.getGameRect().rect.right;
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
+		return block;
 	}
-	public void checkGeneratingBlock() {
-		if (lastBlockRight < getWidth()) {
-			generateBlock();
-		}
+	private void generateBlocks() {
+		while (generateBlock().getLeft() - startBlockRight <= this.getRight());
 	}
 	public void moveBlocks(int speed) {
+		// стартовый блок
+		if (startBlock != null) {
+			startBlock.getGameRect().rect.offset(-speed, 0);
+			if (startBlock.getGameRect().rect.right < 0) startBlock = null;
+		}
+		// остальные блоки
 		for (Block block : blocks) {
 			block.getGameRect().rect.offset(-speed, 0);
-			if (block.getGameRect().rect.right < 0 && blockToDelete != null) blockToDelete = block;
-		}
-		if (blockToDelete != null) {
-			blocks.remove(blockToDelete);
-			blockToDelete = null;
+			if (block.getGameRect().rect.right < 0) {
+				Point coords = this.randBlockCoords(block);
+				block.setGamePosition(coords.x, coords.y);
+				lastBlockRight = block.getRight();
+			}
 		}
 		lastBlockRight -= speed;
 	}
+	private Point randBlockCoords(Block block) {
+		int x = rand.nextInt(1) + lastBlockRight + 200;
+		int y = rand.nextInt(getHeight() - block.getWidth() * 2) + block.getWidth() * 2;
+		return new Point(x, y);
+	}
 	public int findFloor(Point from) {
+		if (startBlock != null && startBlock.getLeft() <= from.x && startBlock.getRight() >= from.x && from.y <= startBlock.getTop())
+			return startBlock.getTop();
 		for (Block block : blocks) {
 			if (block.getLeft() <= from.x && block.getRight() >= from.x && from.y <= block.getTop()) {
 				return block.getTop();
@@ -149,7 +161,7 @@ public class Map {
 		return -1;
 	}
 	public Block getStartBlock() {
-		return blocks.get(0);
+		return startBlock;
 	}
 	public Block findBlock(int x, int y) {
 		for (Block block : blocks) {

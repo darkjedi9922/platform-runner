@@ -87,7 +87,6 @@ public class MainGameView extends GameView {
 				Game.map.getPlayer().setBackground(Game.map.getPlayer().getWalkDrawable());
 			}
 			Game.map.moveBlocks((int) (Game.map.getPlayer().getWalkSpeed() + speedup));
-			Game.map.checkGeneratingBlock();
 			speedup += speedupDelta;
 		} catch (Exception e) {
 			// На телефоне почему-то ошибка
