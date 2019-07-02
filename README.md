@@ -5,11 +5,11 @@ It is a simple game on Android where the player need jump on platforms and try t
 ## Screenshots
 
 <div>
-    <img src="project/screenshots/start_menu.png">
-    <img src="project/screenshots/level_blue.png">
-    <img src="project/screenshots/level_yellow.png">
-    <img src="project/screenshots/level_green.png">
-    <img src="project/screenshots/level_pink.png">
+    <img src="project/screenshots/start_menu.png" width="45%">
+    <img src="project/screenshots/level_blue.png" width="45%">
+    <img src="project/screenshots/level_yellow.png" width="45%">
+    <img src="project/screenshots/level_green.png" width="45%">
+    <img src="project/screenshots/level_pink.png" width="45%">
 </div>
 
 # Thanks
